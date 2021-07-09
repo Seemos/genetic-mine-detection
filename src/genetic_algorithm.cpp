@@ -1,9 +1,10 @@
 #include "genetic_algorithm.hpp"
-#include "knapsack_data.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <cmath>
+#include <float.h>
 
 // Generates a base population of a given size
 // genes are randomized between the lower and
@@ -11,36 +12,44 @@
 std::vector<genome> generate_random_population(unsigned size_population, unsigned size_genome, int lower_bound, int upper_bound){
     std::vector<genome> population;
     population.reserve(size_population);
+    std::uniform_real_distribution<double> distribution (0, 1);
+	std::default_random_engine engine;
     for(unsigned i = 0; i < size_population; i++){
         genome individuum;
         individuum.genes.reserve(size_genome);
         for(unsigned j = 0; j < size_genome; j++){
-            individuum.genes.push_back(rand()%(1 + upper_bound - lower_bound) + lower_bound);
+            individuum.genes.push_back(distribution(engine));
         }
-        individuum.fitness = 0;
+        individuum.fitness = -DBL_MAX;
         population.push_back(individuum);
     }
     return population;
 }
 
 // calculates the problem specific fitness of each individuum
-void calculate_fitness(genome& individuum){
-    int value = 0;
-    int volume = 0;
-    for(unsigned i = 0; i < individuum.genes.size(); i++){
-        if(individuum.genes[i] == 1){
-            value += values[i];
-            volume += volumes[i];
+void calculate_fitness(genome& individuum, std::vector<std::vector<double>>& evaluation_set){
+    individuum.fitness = calculate_accuracy(individuum, evaluation_set);
+}
+
+double calculate_accuracy(genome& individuum, std::vector<std::vector<double>>& evaluation_set){
+    double accuracy = 0;
+    unsigned classified_correctly = 0;
+    for(auto& datapoint : evaluation_set){
+        double value = 0;
+        for(unsigned i = 0; i < individuum.genes.size(); i++){
+            value += individuum.genes[i]*datapoint[i];
         }
+        if((int)datapoint[individuum.genes.size()] == 1 && value >= 0.5) classified_correctly += 1;
+        else if ((int)datapoint[individuum.genes.size()] == 0 && value < 0.5) classified_correctly += 1;
     }
-    if(volume > max_volume) individuum.fitness = 0;
-    else individuum.fitness = value;
+    accuracy = (double)classified_correctly/evaluation_set.size();
+    return accuracy;
 }
 
 // calculate the fitness of the whole population
-void evaluate_population(std::vector<genome>& population){
+void evaluate_population(std::vector<genome>& population, std::vector<std::vector<double>>& evaluation_set){
     for(auto& instance : population){
-        calculate_fitness(instance);
+        calculate_fitness(instance, evaluation_set);
     }
 }
 
@@ -151,18 +160,12 @@ void crossover(std::vector<genome>& population_children, std::vector<genome>& po
 void mutate_population(std::vector<genome>& population, double probability, unsigned n_ignored, int lower_bound, int upper_bound){
     std::uniform_real_distribution<double> distribution (0, 1);
 	std::default_random_engine engine;
-    double probability_decrement = probability / 2;
     double mutation;
     for(unsigned i = n_ignored; i < population.size(); i++){
         for(auto& gene : population[i].genes){
             mutation = distribution(engine);
             if(mutation <= probability){
-                if(mutation < probability_decrement && gene > lower_bound){
-                    gene--;
-                }
-                else if (gene < upper_bound){
-                    gene++;
-                }
+                gene += distribution(engine) - 0.5;
             }
         }
     }

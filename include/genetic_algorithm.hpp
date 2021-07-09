@@ -13,8 +13,9 @@ typedef struct{
 std::vector<genome> generate_random_population(unsigned size_population, unsigned size_genome, int lower_bound, int upper_bound);
 
 // Evaluating
-void calculate_fitness(genome& individuum);
-void evaluate_population(std::vector<genome>& population);
+void calculate_fitness(genome& individuum, std::vector<std::vector<double>>& evaluation_set);
+void evaluate_population(std::vector<genome>& population, std::vector<std::vector<double>>& evaluation_set);
+double calculate_accuracy(genome& individuum, std::vector<std::vector<double>>& evaluation_set);
 
 // Sorting
 bool compare_fitness(const genome& genome_left, const genome& genome_right);
