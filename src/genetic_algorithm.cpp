@@ -175,7 +175,7 @@ void print_population(std::vector<genome>& population){
     for(auto& individuum : population){
         printf("Genes: ");
         for(auto gene : individuum.genes){
-            printf("%i\t", gene);
+            printf("%lf\t", gene);
         }
         printf("Fitness: %lf\n", individuum.fitness);
     }

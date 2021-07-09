@@ -6,7 +6,7 @@
 
 typedef struct{
     double fitness;
-    std::vector<int> genes;
+    std::vector<double> genes;
 }genome;
 
 // random population is used at the beginning to initialize the base generation
