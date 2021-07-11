@@ -14,7 +14,7 @@ double probability_crossover = 0.9;
 double probability_mutation = 0.8;
 
 // Population parameters
-unsigned size_population = 500;
+unsigned size_population = 800;
 unsigned size_genome = 60;
 int gene_bound_upper = 1;
 int gene_bound_lower = 0;
@@ -69,8 +69,9 @@ int main(){
 
         // Save the best individuum and its fitness
         // if an improvement has been made
-        if (population_parents[0].fitness > fitness_best){
-            fitness_best = population_parents[0].fitness;
+        double current_fitness = calculate_accuracy(population_parents[0], testing_data);
+        if (current_fitness > fitness_best){
+            fitness_best = current_fitness;
             best_individuums.push_back(population_parents[0]);
         }
 
@@ -88,7 +89,7 @@ int main(){
         population_children.clear();
         
     }
-
+    best_individuums.push_back(population_parents[0]);
     printf("----------------------\n");
     printf("Population of best individuums:\n");
     printf("----------------------\n");
