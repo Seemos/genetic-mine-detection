@@ -1,4 +1,5 @@
 #include "genetic_algorithm.hpp"
+#include "io.h"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -169,6 +170,15 @@ void mutate_population(std::vector<genome>& population, double probability, unsi
             }
         }
     }
+}
+
+void save_population_genes(std::vector<genome>& population, const char* output_file){
+    std::vector<std::vector<double>> population_genes;
+    population_genes.reserve(population.size());
+    for(auto& individuum : population){
+        population_genes.push_back(individuum.genes);
+    }
+    write_csv(population_genes, output_file);
 }
 
 //USED FOR DEBUG ONLY

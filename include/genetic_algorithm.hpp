@@ -26,6 +26,9 @@ void use_elitism(std::vector<genome>& population_children, std::vector<genome>& 
 void crossover(std::vector<genome>& population_children, std::vector<genome>& population_parents, double probability, unsigned n_individuums);
 void mutate_population(std::vector<genome>& population, double probability, unsigned n_ignored, int lower_bound, int upper_bound);
 
+// Saving
+void save_population_genes(std::vector<genome>& population, const char* output_file);
+
 // Debug
 void print_population(std::vector<genome>& population);
 

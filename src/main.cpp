@@ -90,6 +90,8 @@ int main(){
         
     }
     best_individuums.push_back(population_parents[0]);
+
+    save_population_genes(best_individuums, "best_individuums.csv");
     printf("----------------------\n");
     printf("Population of best individuums:\n");
     printf("----------------------\n");
